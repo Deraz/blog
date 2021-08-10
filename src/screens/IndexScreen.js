@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,18 @@ import { AntDesign } from "@expo/vector-icons";
 import { Context } from "../context/BlogContext";
 
 const IndexScreen = ({ navigation }) => {
-  const { state, deleteBlogPost } = useContext(Context);
+  const { state, deleteBlogPost, getBlogPosts } = useContext(Context);
+
+  useEffect(() => {
+    getBlogPosts();
+    const listener = navigation.addListener("didFocus", () => {
+      getBlogPosts();
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <View>
@@ -44,7 +55,7 @@ const IndexScreen = ({ navigation }) => {
   );
 };
 
-IndexScreen.navigationOptions = ({navigation}) => {
+IndexScreen.navigationOptions = ({ navigation }) => {
   return {
     headerRight: () => (
       <TouchableOpacity onPress={() => navigation.navigate("Create")}>
